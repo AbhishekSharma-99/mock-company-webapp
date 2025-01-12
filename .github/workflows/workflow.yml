@@ -4,21 +4,31 @@ on:
   push:
     branches:
       - '**'  # This means it will run on any branch
+  pull_request:
+    branches:
+      - '**'  # This means it will run on any pull request
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # You can also use 'windows-latest' if you prefer
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up JDK
+      - name: Set up JDK 8
         uses: actions/setup-java@v2
         with:
-          java-version: '11'  # Specify the Java version you need
+          java-version: '8'  # Set to Java 8 as per your application requirements
+          distribution: 'temurin'  # Use 'temurin' for the latest OpenJDK
 
-      - name: Build
-        run: ./gradlew assemble
+      - name: Build the application
+        run: ./gradlew build  # Use the Gradle wrapper to build the application
 
-      - name: Test
-        run: ./gradlew test
+      - name: Run tests
+        run: ./gradlew test  # Use the Gradle wrapper to run tests
+
+      - name: Run the application (optional)
+        run: ./gradlew bootRun  # This will start the application
+        env:
+          SPRING_PROFILES_ACTIVE: 'test'  # Set any necessary environment variables
